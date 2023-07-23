@@ -16,18 +16,18 @@ const ImageCard = ({ image, button }) => {
           className="object-cover w-full h-40 rounded-t-lg"
         />
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">
+      <div className="">
+        {/* <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">
           {filename}
-        </h3>
-        <p className="text-sm text-gray-500 mb-2">Uploaded at: {createdAt}</p>
+        </h3> */}
+        {/* <p className="text-sm text-gray-500 mb-2">Uploaded at: {createdAt}</p> */}
         {button}
 
         {/* Additional content can be added here */}
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <span className="text-gray-600 mr-2">{"20"} Likes</span>
           <span className="text-gray-600">{"10"} Comments</span>
-        </div>
+        </div> */}
       </div>
     </div>
   );

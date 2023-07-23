@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ImageCard from './ImageCard';
+import ImageCard from './GalleryPage/ImageCard';
 
 const SearchPage = ({ allImages }) => {
   const [keyword, setKeyword] = useState('');
