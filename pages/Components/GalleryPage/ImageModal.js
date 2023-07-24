@@ -32,7 +32,11 @@ const ImageModal = ({ imageId, image, isOpen, onCloseModal }) => {
     }
   };
 
-  const downloadImage = (url) => {
+  const downloadImage = async (url) => {
+    // const response = await axios.get(
+    //   `${process.env.NEXT_PUBLIC_API_URL}/images/${imageId}/download`
+    // );
+    // console.log(response);
     const link = document.createElement("a");
     link.href = url;
     link.download = "name";
