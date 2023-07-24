@@ -2,9 +2,9 @@ import Image from "next/image";
 import React from "react";
 
 const AlbumCard = ({ album, button, imageId }) => {
-  const { title, description, album_image } = album;
-  const date = new Date(album.createdAt);
-  console.log(album?.title, date);
+  // const { title, description, album_image } = album;
+  // const date = new Date(album.createdAt);
+  // console.log(album?.title, date);
 
   return (
     <div class="border border-gray-300 rounded p-4 shadow-md">

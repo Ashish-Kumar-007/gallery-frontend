@@ -20,7 +20,7 @@ const ImageCard = ({ image, button }) => {
         <h3 className="text-lg font-semibold text-gray-800 mx-2 mb-2 truncate">
           {image?.caption}
         </h3>
-        <p className="text-sm text-gray-500 font-semibold mb-2 mx-2">Uploaded at: {image.createdAt}</p>
+        <p className="text-sm text-gray-500 font-semibold mb-2 mx-2">Uploaded at: {image?.createdAt}</p>
       </div>
     </div>
   );
