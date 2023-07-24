@@ -8,44 +8,25 @@ import {
   RiUserSmileLine,
 } from "react-icons/ri";
 import Image from "next/image";
+import axios from "axios";
+import { BeatLoader } from "react-spinners";
+import { toast } from "react-hot-toast";
+import AddToAlbumModal from "../AlbumPage/AddToAlbumModal";
 
-const demoComments = [
-  {
-    id: 1,
-    text: "Beautiful image!",
-  },
-  {
-    id: 2,
-    text: "Amazing photography!",
-  },
-  {
-    id: 3,
-    text: "I love this picture!",
-  },
-  {
-    id: 4,
-    text: "Stunning view!",
-  },
-  {
-    id: 5,
-    text: "Great shot!",
-  },
-];
-
-const ImageModal = ({ image, isOpen, onCloseModal }) => {
+const ImageModal = ({ imageId, image, isOpen, onCloseModal }) => {
   const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0); // Replace "20" with the actual likes count for the selected image
-  const [comments, setComments] = useState(demoComments); // You can replace this with your actual comments data
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const addLike = async () => {
     try {
-      console.log(selectedImage);
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/images/selectedImage._id`
+      setLiked(true);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/images/${imageId}/add-like`
       );
       console.log(response.data);
-      const data = response.data;
-      setLikesCount(data);
+      toast.success("liked success!");
     } catch (error) {
       console.error("Error fetching images:", error);
     }
@@ -84,6 +65,37 @@ const ImageModal = ({ image, isOpen, onCloseModal }) => {
     }
   };
 
+  const handlePostComment = async () => {
+    try {
+      setLoading(true);
+      if (!newComment) {
+        toast.error("Please enter a comment first!");
+        return;
+      }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/images/${imageId}/add-comment`,
+        { comment: newComment }
+      );
+      setNewComment("");
+      console.log(response);
+      toast.success("comment success!");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to handle opening the "Add to album" modal
+  const handleOpenAddToAlbumModal = () => {
+    setIsOpenModal(true);
+  };
+
+  // Function to close the "Add to album" modal
+  const handleCloseAddToAlbumModal = () => {
+    setIsOpenModal(false);
+  };
+
   return (
     <>
       {isOpen && image && (
@@ -92,8 +104,11 @@ const ImageModal = ({ image, isOpen, onCloseModal }) => {
           <div className="bg-white p-4 rounded-md shadow-md flex flex-col">
             {/* Close button inside the modal content */}
             <button
-              onClick={onCloseModal}
-              className=" text-amber-500 rounded-md hover:text-amber-600 flex justify-end"
+              onClick={() => {
+                onCloseModal();
+                setLiked(false);
+              }}
+              className="text-amber-500 rounded-md hover:text-amber-600 flex justify-end"
             >
               <RiCloseFill size={25} />
             </button>
@@ -102,34 +117,37 @@ const ImageModal = ({ image, isOpen, onCloseModal }) => {
               <div className="md:w-2/3 p-4">
                 <Image
                   src={image.image_url}
-                  alt={"image.filename"}
-                  height={60}
-                  width={250}
-                  className="object-contain rounded-md w-full h-full"
+                  alt={image.filename}
+                  height={400}
+                  width={400}
+                  className="object-cover rounded-md w-full h-full"
                 />
                 {/* Likes count with like icons */}
                 <div className="flex items-center mt-1">
                   {liked ? (
                     <RiThumbUpFill
+                      size={20}
                       className="text-blue-500 mr-1 cursor-pointer"
                       onClick={() => {
                         // setLiked(false);
-                        addLike();
                       }}
                     />
                   ) : (
                     <RiThumbUpLine
+                      size={20}
                       className="text-gray-500 mr-1 cursor-pointer"
-                      onClick={() => setLiked(true)}
+                      onClick={() => addLike()}
                     />
                   )}
-                  <span className="text-gray-600">{likesCount}</span>
+                  <span className="text-gray-600">{image?.likes_count}</span>
 
                   <RiDownload2Fill
+                    size={20}
                     className="text-gray-500 ml-2 cursor-pointer"
                     onClick={(e) => downloadImage(image.image_url)}
                   />
                   <RiShareCircleLine
+                    size={20}
                     className="text-gray-500 ml-2 cursor-pointer"
                     onClick={() => shareImage(image.image_url, image.caption)}
                   />
@@ -142,10 +160,10 @@ const ImageModal = ({ image, isOpen, onCloseModal }) => {
                 <div className="border-t pt-2">
                   {/* Render comments here */}
                   {/* Example: */}
-                  {comments.map((comment) => (
+                  {image.comments.map((comment) => (
                     <div key={comment.id} className="mb-2 flex items-center">
-                      <RiUserSmileLine />
-                      <p className="text-gray-600 px-2">{comment.text}</p>
+                      <RiUserSmileLine size={20} />
+                      <p className="text-gray-600 px-2">{comment.comment}</p>
                     </div>
                   ))}
                 </div>
@@ -155,17 +173,36 @@ const ImageModal = ({ image, isOpen, onCloseModal }) => {
                   type="text"
                   placeholder="Leave a comment..."
                   className="mt-4 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                  // value={newComment}
-                  // onChange={(e) => setNewComment(e.target.value)}
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
                 />
                 <button
-                  // onClick={
-                  //   handlePostComment
-                  // } /* Add the click handler to post comments */
+                  onClick={(e) =>
+                    handlePostComment()
+                  } /* Add the click handler to post comments */
                   className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full"
+                  disabled={loading}
                 >
-                  Post
+                  {loading ? (
+                    <BeatLoader color="#ffff" size={10} />
+                  ) : (
+                    "Post comment"
+                  )}
                 </button>
+                <button
+                  className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-full"
+                  onClick={handleOpenAddToAlbumModal}
+                >
+                  Add to album
+                </button>
+                {/* Modal for Adding to Album */}
+                {isOpenModal && imageId && (
+                  <AddToAlbumModal
+                    imageId={imageId}
+                    isOpen={isOpenModal}
+                    onCloseModal={handleCloseAddToAlbumModal}
+                  />
+                )}
               </div>
             </div>
           </div>

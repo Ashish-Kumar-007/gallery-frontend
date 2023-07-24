@@ -14,14 +14,14 @@ const ImageCard = ({ image, button }) => {
           width={400}
           height={300}
           className="object-cover w-full h-40 rounded-t-lg"
-        />
+        />{button}
       </div>
-      <div className="">
+      <div className="mt-2">
         {/* <h3 className="text-lg font-semibold text-gray-800 mb-2 truncate">
           {filename}
         </h3> */}
-        {/* <p className="text-sm text-gray-500 mb-2">Uploaded at: {createdAt}</p> */}
-        {button}
+        <p className="text-sm text-gray-500 font-semibold mb-2 mx-2">Uploaded at: {createdAt}</p>
+        
 
         {/* Additional content can be added here */}
         {/* <div className="flex items-center">
