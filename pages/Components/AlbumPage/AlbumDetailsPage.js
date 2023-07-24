@@ -5,34 +5,7 @@ import axios from "axios";
 import { BeatLoader } from "react-spinners";
 
 const AlbumDetailsPage = ({ isOpen, album, onCloseModal, images }) => {
-  console.log(images);
-  // const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-
-
-  // const getImages = async () => {
-  //   try {
-  //     console.log(`${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`);
-  //     setLoading(true)
-  //     const response = await axios.get(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`
-  //     );
-  //     const data = response.data;
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.error("Error fetching images:", error);
-  //   } finally{
-  //     setLoading(false)
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getImages();
-  // }, []);
-
-  // if(loading){
-  //   return <BeatLoader />
-  // }
 
   return (
     <div
@@ -41,7 +14,7 @@ const AlbumDetailsPage = ({ isOpen, album, onCloseModal, images }) => {
       }`}
     >
       {/* Modal Content */}
-      <div className="bg-white p-4 rounded-md shadow-md flex flex-col lg:w-[1000px] w-80 ">
+      <div className="bg-white p-4 rounded-md shadow-md flex flex-col w-full max-w-screen-sm">
         {/* Close button inside the modal content */}
         <button
           onClick={onCloseModal}
@@ -52,8 +25,8 @@ const AlbumDetailsPage = ({ isOpen, album, onCloseModal, images }) => {
         <div>
           {/* <h2>{album.title}</h2>
           <p>{description}</p> */}
-          {loading ? <BeatLoader size={30}/> : null}
-          <div className="grid lg:grid-cols-3 grid-col-1 gap-4">
+          {/* {loading ? <BeatLoader size={30} /> : null} */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {images?.map((image) => (
               <ImageCard key={image._id} image={image} />
             ))}
