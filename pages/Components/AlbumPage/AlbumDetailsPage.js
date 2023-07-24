@@ -10,30 +10,29 @@ const AlbumDetailsPage = ({ isOpen, album, onCloseModal, images }) => {
   const [loading, setLoading] = useState(false);
 
 
-  const getImages = async () => {
-    try {
-      console.log(`${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`);
-      setLoading(true)
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`
-      );
-      const data = response.data;
-      console.log(data);
-      setImages(data);
-    } catch (error) {
-      console.error("Error fetching images:", error);
-    } finally{
-      setLoading(false)
-    }
-  };
+  // const getImages = async () => {
+  //   try {
+  //     console.log(`${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`);
+  //     setLoading(true)
+  //     const response = await axios.get(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/albums/${album._id}`
+  //     );
+  //     const data = response.data;
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.error("Error fetching images:", error);
+  //   } finally{
+  //     setLoading(false)
+  //   }
+  // };
 
-  useEffect(() => {
-    getImages();
-  }, []);
+  // useEffect(() => {
+  //   getImages();
+  // }, []);
 
-  if(loading){
-    return <BeatLoader />
-  }
+  // if(loading){
+  //   return <BeatLoader />
+  // }
 
   return (
     <div
@@ -55,7 +54,7 @@ const AlbumDetailsPage = ({ isOpen, album, onCloseModal, images }) => {
           <p>{description}</p> */}
           {loading ? <BeatLoader size={30}/> : null}
           <div className="grid lg:grid-cols-3 grid-col-1 gap-4">
-            {images.map((image) => (
+            {images?.map((image) => (
               <ImageCard key={image._id} image={image} />
             ))}
           </div>
