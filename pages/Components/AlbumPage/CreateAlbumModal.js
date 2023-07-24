@@ -27,7 +27,12 @@ const CreateAlbumModal = ({ isOpen, onCloseModal, onCreateAlbum }) => {
       formData.append("image", file);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/create-album`,
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
       console.log(response.data);
       // Reset the input fields

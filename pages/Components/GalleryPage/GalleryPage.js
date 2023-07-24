@@ -13,6 +13,7 @@ const GalleryPage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageId, setImageId] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState("Most Recent"); // New state for the selected filter
   const router = useRouter();
 
   const handleOpenModal = async (image) => {
@@ -51,6 +52,21 @@ const GalleryPage = () => {
     }
   };
 
+  const handleFilterOptionClick = async (option) => {
+    setSelectedFilter(option);
+    setIsOpen(false); 
+    console.log(selectedFilter);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/filter-images?filter=${option}`
+      );
+      const data = response.data;
+      setImages(data);
+    } catch (error) {
+      console.error("Error fetching filtered images:", error);
+    }
+  };
+
   useEffect(() => {
     getImages();
   }, []);
@@ -63,13 +79,14 @@ const GalleryPage = () => {
       <HomeButton />
 
       <div className="flex justify-end">
-        <button className="flex text-gray-900 bg-slate-300 mx-2 hover:bg-slate-400 font-semibold p-2 rounded-md">
-          Filter
-          <RiFilter2Fill size={25} />
-        </button>
+        <FilterDropdown
+          selectedFilter={selectedFilter}
+          handleFilterOptionClick={handleFilterOptionClick}
+        />
+
         <button
           className="flex text-gray-900 bg-slate-300 hover:bg-slate-400 font-semibold p-2 rounded-md"
-          onClick={(e) => {
+          onClick={() => {
             router.push("/upload");
           }}
         >
@@ -90,7 +107,6 @@ const GalleryPage = () => {
   );
 };
 
-// A separate component for the Image Grid
 const ImageGrid = ({ images, handleOpenModal }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
@@ -109,6 +125,45 @@ const ImageGrid = ({ images, handleOpenModal }) => {
           />
         </div>
       ))}
+    </div>
+  );
+};
+
+const FilterDropdown = ({ selectedFilter, handleFilterOptionClick }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prevState) => !prevState);
+  };
+
+  // Options for the filter dropdown
+  const filterOptions = ["Most Recent", "Most Liked", "Most Commented"];
+
+  return (
+    <div className="relative">
+      <button
+        className="flex text-gray-900 bg-slate-300 mx-2 hover:bg-slate-400 font-semibold p-2 rounded-md"
+        onClick={toggleDropdown}
+      >
+        Filter
+        <RiFilter2Fill size={25} />
+      </button>
+
+      {isDropdownOpen && (
+        <div className="absolute top-10 right-0 z-10 bg-white p-2 shadow-md rounded-md">
+          {filterOptions.map((option) => (
+            <button
+              key={option}
+              className={`block w-40 text-left px-6 py-2 hover:bg-gray-100 ${
+                selectedFilter === option ? "bg-gray-100 font-semibold" : ""
+              }`}
+              onClick={() => handleFilterOptionClick(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

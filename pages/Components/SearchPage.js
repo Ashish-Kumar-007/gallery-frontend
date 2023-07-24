@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
-import ImageCard from './GalleryPage/ImageCard';
-import HomeButton from './HomeButton';
+import React, { useState } from "react";
+import ImageCard from "./GalleryPage/ImageCard";
+import HomeButton from "./HomeButton";
+import axios from "axios";
 
 const SearchPage = ({ allImages }) => {
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [hasFetched, setHasFetched] = useState(false);
 
-  const handleSearch = () => {
-    // Handle the image search logic here (e.g., filter images by keyword)
-    // Update the "searchResults" state with the filtered images
+  const handleSearch = async () => {
+    try {
+      setHasFetched(true);
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/search`,
+        { params: { keyword } } // Send the keyword as a query parameter
+      );
+
+      const data = response.data;
+      console.log(data);
+      setSearchResults(data.images); // Remove the square brackets around data
+      console.log(searchResults);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+    }
   };
 
   return (
     <div className="p-4">
-      <h2 className="text-4xl font-bold mb-6 bg-slate-200 p-3 rounded-md shadow-md">Search Images</h2>
-      <div className='mb-4'>
+      <h2 className="text-4xl font-bold mb-6 bg-slate-200 p-3 rounded-md shadow-md">
+        Search Images
+      </h2>
+      <div className="mb-4">
         <HomeButton />
       </div>
-      
+
       <div className="flex items-center mb-8">
         <input
           type="text"
@@ -35,9 +51,13 @@ const SearchPage = ({ allImages }) => {
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {searchResults.map((image) => (
-          <ImageCard key={image._id} image={image} />
-        ))}
+        {hasFetched && searchResults.length > 0 ? ( // Check if searchResults is not empty before using map
+          searchResults.map((image) => (
+            <ImageCard key={image._id} image={image} />
+          ))
+        ) : (
+          <p>No search results found.</p>
+        )}
       </div>
     </div>
   );
