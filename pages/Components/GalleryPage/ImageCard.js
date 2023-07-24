@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 const ImageCard = ({ image, button }) => {
   // const { filename, createdAt, image_url, caption } = image;
-  console.log(image);
+  // console.log(image);
   return (
     <div className="border rounded-lg overflow-hidden shadow-md transition duration-300 ease-in-out transform hover:scale-105 bg-white">
       <div className="relative">
